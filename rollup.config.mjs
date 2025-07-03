@@ -4,7 +4,7 @@ import prettier from "rollup-plugin-prettier";
 
 export default [
   {
-    input: "src/main.ts",
+    input: "src/index.ts",
     output: [
       {
         file: "dist/esm/index.js",
