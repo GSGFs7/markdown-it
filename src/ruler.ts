@@ -1,16 +1,29 @@
-export type RuleFN = (...args: unknown[]) => unknown;
+import StateBlock from "./parser/block_state";
+import StateCore from "./parser/core_state";
+import StateInline from "./parser/inline_state";
 
-export type Rule = {
+export type CoreRuleFN = (state: StateCore, silent?: boolean) => boolean;
+export type BlockRuleFN = (
+  state: StateBlock,
+  startLine: number,
+  endLine: number,
+  silent?: boolean,
+) => boolean;
+export type InlineRuleFN = (state: StateInline, silent?: boolean) => boolean;
+
+export type RuleFN = CoreRuleFN | BlockRuleFN | InlineRuleFN;
+
+export type Rule<T extends RuleFN = RuleFN> = {
   name: string;
   enabled: boolean;
-  fn: RuleFN;
+  fn: T;
   alt: string[];
 };
 
-export class Ruler {
-  private rules: Rule[];
+export class Ruler<T extends RuleFN = RuleFN> {
+  private rules: Rule<T>[];
   private index: Map<string, number>;
-  private chains: Record<string, RuleFN[]> | null; // rule chain
+  private chains: Record<string, T[]> | null; // rule chain
 
   constructor() {
     this.rules = [];
@@ -39,14 +52,15 @@ export class Ruler {
   }
 
   // Add rules to the end of the array
-  push(ruleName: string, fn: RuleFN, options?: { alt?: string[] }): void {
+  push(ruleName: string, fn: T, options?: { alt?: string[] }): void {
     const opt = options || {};
 
-    if (this.findIndex(ruleName) === -1) {
-      throw new Error(`Ruler: rule name ${ruleName} already exists`);
+    if (this.findIndex(ruleName) !== -1) {
+      throw new Error(`Ruler: rule name '${ruleName}' already exists`);
     }
 
     this.rules.push({ name: ruleName, enabled: true, fn, alt: opt.alt || [] });
+    this.index.set(ruleName, this.rules.length - 1);
 
     // invalidate rule chain
     this.chains = null;
@@ -83,7 +97,7 @@ export class Ruler {
   }
 
   buildChain() {
-    const chains: Record<string, RuleFN[]> = {};
+    const chains: Record<string, T[]> = {};
     const chainsNames: Set<string> = new Set([""]);
 
     this.rules.forEach((rule) => {
@@ -116,7 +130,7 @@ export class Ruler {
   }
 
   // get the rule function
-  getRules(ruleName: string): ((...args: unknown[]) => unknown)[] {
+  getRules(ruleName: string): T[] {
     if (this.chains === null) {
       this.chains = this.buildChain();
     }
@@ -124,3 +138,7 @@ export class Ruler {
     return this.chains[ruleName];
   }
 }
+
+export type CoreRuler = Ruler<CoreRuleFN>;
+export type BlockRuler = Ruler<BlockRuleFN>;
+export type InlineRuler = Ruler<InlineRuleFN>;

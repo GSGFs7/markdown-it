@@ -1,17 +1,23 @@
-import Markdown from "../Markdown";
+import Markdown from "../markdown";
 import Token from "../token";
 
 /**
  * StateCore: the state object of core parser
  */
 export default class StateCore {
-  /** raw Markdown string */
+  /**
+   * raw Markdown string
+   */
   src: string;
 
-  /** env sandbox used to pass data between rules */
+  /**
+   * env sandbox used to pass data between rules
+   */
   env: Record<string, unknown>;
 
-  /** parsed Token array */
+  /**
+   * parsed Token array
+   */
   tokens: Token[];
 
   /**
@@ -19,7 +25,9 @@ export default class StateCore {
    */
   inlineMode: boolean;
 
-  /** link to parser instance */
+  /**
+   * link to parser instance
+   */
   md: Markdown;
 
   constructor(src: string, md: Markdown, env: Record<string, unknown>) {

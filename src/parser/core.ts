@@ -1,15 +1,16 @@
-import { RuleFN, Ruler } from "../ruler";
+import { CoreRuleFN, CoreRuler, Ruler } from "../ruler";
+import r_normalize from "../rules/core/normalize";
 import StateCore from "./core_state";
 
-const rules: [string, RuleFN][] = [];
+const _rules: [string, CoreRuleFN][] = [["normalize", r_normalize]];
 
 export default class Core {
-  ruler: Ruler;
+  ruler: CoreRuler;
 
   constructor() {
     this.ruler = new Ruler();
 
-    for (const [ruleName, fn] of rules) {
+    for (const [ruleName, fn] of _rules) {
       this.ruler.push(ruleName, fn);
     }
   }
