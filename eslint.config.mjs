@@ -1,5 +1,3 @@
-//! F**K! `@rollup/plugin-eslint` not support the new config file
-
 import js from "@eslint/js";
 import tseslint from "typescript-eslint";
 import { defineConfig, globalIgnores } from "eslint/config";
@@ -17,10 +15,10 @@ export default defineConfig([
       globals: {
         ...globals.browser,
         ...globals.node,
-        console: "readonly",
-        module: "readonly",
       },
     },
-    rules: {},
+    rules: {
+      "@typescript-eslint/no-unused-vars": "warn",
+    },
   },
 ]);

@@ -1,4 +1,4 @@
-export function isSpace(code) {
+export function isSpace(code: number) {
   switch (code) {
     case 0x09: // '\t', tab
     case 0x20: // ' ', space

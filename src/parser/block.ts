@@ -3,7 +3,8 @@ import { BlockRuleFN, BlockRuler, Ruler } from "../ruler";
 import Token from "../token";
 import StateBlock from "./block_state";
 
-const _rules: [string, BlockRuleFN, string[]][] = [];
+import r_table from "../rules/block/table";
+import r_paragraph from "../rules/block/paragraph";
 
 type StateBlockConstructor = new (
   src: string,
@@ -12,8 +13,13 @@ type StateBlockConstructor = new (
   outTokens: Token[],
 ) => StateBlock; // can be extend a child class
 
+const _rules: [string, BlockRuleFN, string[]?][] = [
+  ["table", r_table, ["paragraph", "reference"]],
+  ["paragraph", r_paragraph],
+];
+
 export default class Block {
-  private ruler: BlockRuler;
+  ruler: BlockRuler;
   State: StateBlockConstructor;
 
   constructor() {
@@ -108,7 +114,6 @@ export default class Block {
       }
     }
   }
-
 
   /**
    * Parses the given source string and generates block-level tokens.

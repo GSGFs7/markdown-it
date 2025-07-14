@@ -1,5 +1,6 @@
 import Markdown from "../markdown";
-import Token from "../token";
+import { TagType } from "../renderer";
+import Token, { TokenType } from "../token";
 import { isSpace } from "../utils";
 
 export default class StateBlock {
@@ -149,7 +150,25 @@ export default class StateBlock {
     this.lineMax = this.bMarks.length - 1;
   }
 
-  push() {}
+  /**
+   * Adds a new block-level token to the state.
+   *
+   * @param type - The type of the token to create.
+   * @param tag - The tag associated with the token.
+   * @param nesting - The nesting level change for the token. Positive values decrease the current level, negative values increase it.
+   * @returns The newly created token.
+   */
+  push(type: TokenType, tag: TagType, nesting: number) {
+    const token = new Token(type, tag, nesting);
+    token.block = true;
+
+    if (nesting < 0) this.level++;
+    token.level = this.level;
+    if (nesting > 0) this.level--;
+
+    this.tokens.push(token);
+    return token;
+  }
 
   /**
    * Skips over empty lines starting from the given line number.
@@ -181,5 +200,53 @@ export default class StateBlock {
    */
   isEmpty(line: number): boolean {
     return this.bMarks[line] + this.tShift[line] >= this.eMarks[line];
+  }
+
+  getLines(begin: number, end: number, indent: number, keepLastLF: boolean) {
+    if (begin >= end) {
+      return "";
+    }
+
+    const queue = new Array(end - begin);
+    for (let i = 0, line = begin; line < end; i++, line++) {
+      const lineStart: number = this.bMarks[line];
+      let lineIndent: number = 0;
+      let first: number = lineStart;
+      let last: number;
+
+      if (line + 1 < end || keepLastLF) {
+        last = this.eMarks[line] + 1;
+      } else {
+        last = this.eMarks[line];
+      }
+
+      while (first < last && lineIndent < indent) {
+        const ch = this.src.charCodeAt(first);
+
+        if (isSpace(ch)) {
+          if (ch === 0x09 /* '\t', Tab */) {
+            lineIndent += 4 - ((lineIndent + this.bsCount[line]) % 4);
+          } else {
+            lineIndent++;
+          }
+        } else if (first - lineStart < this.tShift[line]) {
+          lineIndent++;
+        } else {
+          break;
+        }
+
+        first++;
+      }
+
+      if (lineIndent > indent) {
+        queue[i] =
+          new Array(lineIndent - indent + 1).join(" ") +
+          this.src.slice(first, end);
+      } else {
+        queue[i] = this.src.slice(first, last);
+      }
+    }
+
+    return queue.join("");
   }
 }

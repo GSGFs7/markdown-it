@@ -79,7 +79,7 @@ export default class Token {
   level: number;
 
   /** An array of child nodes (inline and image tokens) */
-  children: Token[] | null;
+  children: Token[];
 
   /**
    * In a case of self-closing tag (code, html, fence, etc.)
@@ -125,7 +125,7 @@ export default class Token {
     this.map = null;
     this.nesting = nesting;
     this.level = 0;
-    this.children = null;
+    this.children = [];
     this.content = "";
     this.markup = "";
     this.info = "";

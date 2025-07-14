@@ -1,3 +1,3 @@
-export function getParserInstance() {
-  
-}
+import Markdown from "./markdown";
+
+export default Markdown;

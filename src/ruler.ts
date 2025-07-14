@@ -2,7 +2,7 @@ import StateBlock from "./parser/block_state";
 import StateCore from "./parser/core_state";
 import StateInline from "./parser/inline_state";
 
-export type CoreRuleFN = (state: StateCore, silent?: boolean) => boolean;
+export type CoreRuleFN = (state: StateCore, silent?: boolean) => void;
 export type BlockRuleFN = (
   state: StateBlock,
   startLine: number,

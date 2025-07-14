@@ -2,3 +2,5 @@ node_modules
 dist
 .rollup.cache
 tsconfig.tsbuildinfo
+pnpm-lock.yaml
+pnpm-workspace.yaml

@@ -2,6 +2,7 @@
   "name": "markdown-parser",
   "version": "1.0.0",
   "description": "",
+  "type": "module",
   "main": "dist/cjs/index.js",
   "module": "dist/esm/index.js",
   "scripts": {
@@ -15,6 +16,7 @@
   "devDependencies": {
     "@eslint/js": "^9.30.0",
     "@rollup/plugin-eslint": "^9.0.5",
+    "@rollup/plugin-terser": "^0.4.4",
     "@rollup/plugin-typescript": "^12.1.4",
     "@typescript-eslint/eslint-plugin": "^8.35.0",
     "@typescript-eslint/parser": "^8.35.0",
