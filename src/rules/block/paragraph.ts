@@ -37,6 +37,8 @@ const paragraph: BlockRuleFN = (state, startLine, endLine): boolean => {
 
   state.line = nextLine;
 
+  // return a Token reference, similar to pointer in c/c++
+  // primitives type will be copy but object is not
   const token_o = state.push("paragraph_open", "p", 1);
   token_o.map = [startLine, state.line];
 

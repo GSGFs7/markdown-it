@@ -1,4 +1,5 @@
 import Markdown from "../markdown";
+import { TagType } from "../renderer";
 import Token, { TokenType } from "../token";
 
 export default class StateInline {
@@ -23,10 +24,20 @@ export default class StateInline {
   /** */
   posMax: number;
 
-  /** Current nesting level */
+  /**
+   * Current nesting level
+   */
   level: number;
 
-  /** */
+  /**
+   * # Text Buffer
+   *
+   * Used to store continuous plain text temporary.
+   *
+   * The buffer will merge many texts to avoid create too many tokens.
+   * It will be pushed as a special token if meet some special mark or pushed as a text token.
+   * It also simplify the rule logic, such as check the number of space before '\n' to use <br />
+   */
   pending: string;
 
   /** */
@@ -38,7 +49,9 @@ export default class StateInline {
   /** */
   delimiters;
 
-  /** Stack of delimiter lists for upper level tags */
+  /**
+   * Stack of delimiter lists for upper level tags
+   */
   _prev_delimiters: Array<unknown>;
 
   /** */
@@ -75,6 +88,14 @@ export default class StateInline {
     this.linkLevel = 0;
   }
 
+  /**
+   * Pushes the current pending text as a new "text" token into the tokens array.
+   * Clears the pending buffer after pushing.
+   *
+   * @remarks
+   * This method creates a new `Token` of type "text" with the current pending content and level,
+   * adds it to the `tokens` array, and resets the pending content to an empty string.
+   */
   pushPending() {
     const token = new Token("text", "", 0);
 
@@ -83,11 +104,9 @@ export default class StateInline {
 
     this.tokens.push(token);
     this.pending = "";
-
-    return token;
   }
 
-  push(type: TokenType, tag, nesting) {
+  push(type: TokenType, tag: TagType, nesting: number) {
     if (this.pending) {
       this.pushPending();
     }

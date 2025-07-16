@@ -23,6 +23,16 @@ export type Rule<T extends RuleFN = RuleFN> = {
 export class Ruler<T extends RuleFN = RuleFN> {
   private rules: Rule<T>[];
   private index: Map<string, number>;
+
+  /**
+   * # Rule chain
+   *
+   * rule chain cache, used to fast find rules
+   *
+   * chains:
+   * "" -> default chain, containing all rules which enabled
+   *
+   */
   private chains: Record<string, T[]> | null; // rule chain
 
   constructor() {
@@ -49,6 +59,50 @@ export class Ruler<T extends RuleFN = RuleFN> {
     this.chains = null;
 
     return true;
+  }
+
+  /**
+   * Builds a chain of rule functions grouped by their alternative names.
+   *
+   * Iterates through all enabled rules, collecting their alternative names into a set.
+   * For each unique chain name, creates an array of rule functions (`T[]`) that are enabled
+   * and either have the chain name in their `alt` array or are part of the default chain.
+   *
+   * @returns A record mapping each chain name to an array of rule functions.
+   */
+  private buildChain(): Record<string, T[]> {
+    const chains: Record<string, T[]> = {};
+    const chainsNames: Set<string> = new Set([""]);
+
+    this.rules.forEach((rule) => {
+      if (!rule.enabled) {
+        return;
+      }
+
+      // collect unique names
+      rule.alt.forEach((altName) => {
+        chainsNames.add(altName);
+      });
+    });
+
+    // O(n^2)?
+    chainsNames.forEach((chainName) => {
+      chains[chainName] = [];
+      this.rules.forEach((rule) => {
+        if (!rule.enabled) {
+          return;
+        }
+
+        // chainName name exist and not found in alt
+        if (chainName && rule.alt.indexOf(chainName) < 0) {
+          return;
+        }
+
+        chains[chainName].push(rule.fn);
+      });
+    });
+
+    return chains;
   }
 
   // Add rules to the end of the array
@@ -94,39 +148,6 @@ export class Ruler<T extends RuleFN = RuleFN> {
         );
       }
     });
-  }
-
-  buildChain() {
-    const chains: Record<string, T[]> = {};
-    const chainsNames: Set<string> = new Set([""]);
-
-    this.rules.forEach((rule) => {
-      if (!rule.enabled) {
-        return;
-      }
-
-      // collect unique names
-      rule.alt.forEach((altName) => {
-        chainsNames.add(altName);
-      });
-    });
-
-    chainsNames.forEach((chain) => {
-      chains[chain] = [];
-      this.rules.forEach((rule) => {
-        if (!rule.enabled) {
-          return;
-        }
-
-        if (chain && rule.alt.indexOf(chain) < 0) {
-          return;
-        }
-
-        chains[chain].push(rule.fn);
-      });
-    });
-
-    return chains;
   }
 
   // get the rule function

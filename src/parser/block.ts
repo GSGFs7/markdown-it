@@ -3,8 +3,11 @@ import { BlockRuleFN, BlockRuler, Ruler } from "../ruler";
 import Token from "../token";
 import StateBlock from "./block_state";
 
-import r_table from "../rules/block/table";
+import r_code from "../rules/block/code";
+import r_fence from "../rules/block/fence";
+import r_heading from "../rules/block/heading";
 import r_paragraph from "../rules/block/paragraph";
+import r_table from "../rules/block/table";
 
 type StateBlockConstructor = new (
   src: string,
@@ -13,12 +16,37 @@ type StateBlockConstructor = new (
   outTokens: Token[],
 ) => StateBlock; // can be extend a child class
 
+/**
+ * # Block parse rules
+ *
+ * First 2 params - rule name & source.
+ * Secondary array - list of rules, which can be terminated by this one.
+ *
+ * such as:
+ *
+ * ```markdown
+ * This is a paragraph
+ * - This is a list
+ * ```
+ *
+ * In this case, the second line will terminate the paragraph rule from the first line.
+ *
+ */
 const _rules: [string, BlockRuleFN, string[]?][] = [
   ["table", r_table, ["paragraph", "reference"]],
+  ["code", r_code],
+  ["fence", r_fence, ["paragraph", "reference", "blockquote", "list"]],
+  ["heading", r_heading, ["paragraph", "reference", "blockquote"]],
   ["paragraph", r_paragraph],
 ];
 
 export default class Block {
+  /**
+   * store rule chain
+   *
+   * "" -> default chain
+   * "paragraph", etc. -> the rules which can terminate it.
+   */
   ruler: BlockRuler;
   State: StateBlockConstructor;
 

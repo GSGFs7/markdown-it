@@ -171,6 +171,51 @@ export default class StateBlock {
   }
 
   /**
+   * Skip char code from given position
+   *
+   * Skips consecutive characters in the source string starting from the given position,
+   * as long as they match the specified character code.
+   *
+   * @param pos - The starting position in the source string.
+   * @param code - The character code to skip.
+   * @returns The position of the first character that does not match the specified code,
+   *          or the length of the source string if all remaining characters match.
+   */
+  skipChars(pos: number, code: number): number {
+    for (let max = this.src.length; pos < max; pos++) {
+      if (this.src.charCodeAt(pos) !== code) {
+        break;
+      }
+    }
+    return pos;
+  }
+
+  /**
+   * Skip char codes reverse from given position - 1
+   *
+   * Moves the position `pos` backwards in the source string as long as the character code at each position
+   * matches the specified `code`, stopping at the `min` boundary (inclusive).
+   *
+   * @param pos - The starting position in the source string to move backwards from.
+   * @param code - The character code to match while moving backwards.
+   * @param min - The minimum position (inclusive) to stop moving backwards.
+   * @returns The new position after skipping matching characters, or the original position if no matches are found.
+   */
+  skipCharsBack(pos: number, code: number, min: number): number {
+    if (pos <= min) {
+      return pos;
+    }
+
+    while (pos > min) {
+      if (code !== this.src.charCodeAt(--pos)) {
+        return pos + 1;
+      }
+    }
+
+    return pos;
+  }
+
+  /**
    * Skips over empty lines starting from the given line number.
    *
    * An empty line is determined by checking if the sum of the beginning mark (`bMarks[line]`)
@@ -187,6 +232,48 @@ export default class StateBlock {
       }
     }
     return line;
+  }
+
+  /**
+   * Skip spaces from given position
+   *
+   * Advances the given position past any consecutive whitespace characters in the source string.
+   *
+   * @param pos - The starting position in the source string.
+   * @returns The position of the first non-whitespace character at or after the given position.
+   */
+  skipSpaces(pos: number): number {
+    for (let max = this.src.length; pos < max; pos++) {
+      const ch = this.src.charCodeAt(pos);
+      if (!isSpace(ch)) {
+        break;
+      }
+    }
+    return pos;
+  }
+
+  /**
+   * Skip spaces from given position in reverse
+   *
+   * Starts at `pos - 1` and moves backwards until a non-space character is found or `min` is reached.
+   * Returns the position of the first non-space character after skipping, or `min` if none found.
+   *
+   * @param pos - The starting position (exclusive) to begin skipping spaces backwards.
+   * @param min - The minimum position (inclusive) to stop searching.
+   * @returns The position after the last skipped space character, or `min` if no spaces were skipped.
+   */
+  skipSpacesBack(pos: number, min: number): number {
+    if (pos <= min) {
+      return pos;
+    }
+
+    while (pos > min) {
+      if (!isSpace(this.src.charCodeAt(--pos))) {
+        return pos + 1;
+      }
+    }
+
+    return pos;
   }
 
   /**

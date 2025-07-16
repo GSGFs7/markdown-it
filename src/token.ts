@@ -1,3 +1,5 @@
+import { TagType } from "./renderer";
+
 interface TokenAttr {
   0: string;
   1: string;
@@ -54,16 +56,24 @@ export type TokenType =
   | "inline";
 
 export default class Token {
-  /** The type of token (string, e.g. "paragraph_open") */
+  /**
+   * The type of token (string, e.g. "paragraph_open")
+   */
   type: TokenType;
 
-  /** HTML tag name */
-  tag: string;
+  /**
+   * HTML tag name
+   */
+  tag: TagType;
 
-  /** HTML attributes. Format: `[[name, value]]` */
+  /**
+   * HTML attributes. Format: `[[name, value]]`
+   */
   attrs: TokenAttr[] | null;
 
-  /** Source map info. Format: `[line_begin, line_end]` */
+  /**
+   * Source map info. Format: `[line_begin, line_end]`
+   */
   map: [number, number] | null;
 
   /**
@@ -75,19 +85,27 @@ export default class Token {
    */
   nesting: number;
 
-  /** nesting level, same as `state.level` */
+  /**
+   * nesting level, same as `state.level`
+   */
   level: number;
 
-  /** An array of child nodes (inline and image tokens) */
+  /**
+   * An array of child nodes (inline and image tokens)
+   */
   children: Token[];
 
   /**
+   * Text content for 'text', 'code', etc.
+   *
    * In a case of self-closing tag (code, html, fence, etc.)
    * it has contents of this tag.
    */
   content: string;
 
   /**
+   * original markdown markup that generate the token
+   *
    * '*' or '_' for emphasis, fence string for fence, etc.
    */
   markup: string;
@@ -118,7 +136,7 @@ export default class Token {
    */
   hidden: boolean;
 
-  constructor(type: TokenType, tag: string, nesting: number) {
+  constructor(type: TokenType, tag: TagType, nesting: number) {
     this.type = type;
     this.tag = tag;
     this.attrs = null;

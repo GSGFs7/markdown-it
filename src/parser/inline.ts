@@ -3,7 +3,9 @@ import { InlineRuleFN, InlineRuler, Ruler } from "../ruler";
 import Token from "../token";
 import StateInline from "./inline_state";
 
-const _rules: [string, InlineRuleFN][] = [];
+import r_text from "../rules/inline/text";
+
+const _rules: [string, InlineRuleFN][] = [["text", r_text]];
 const _rules2: [string, InlineRuleFN][] = [];
 
 type StateInlineConstructor = new (
