@@ -11,15 +11,16 @@ export default [
         sourcemap: true,
         plugins: [
           terser({
-            format: { ascii_only: true },
-            // mangle: false,
-            // compress: false,
-            // format: {
-            //   comments: "all",
-            //   beautify: true,
-            //   ascii_only: true,
-            //   indent_level: 2,
-            // },
+            // format: { ascii_only: true },
+            // make debug easier
+            mangle: false,
+            compress: false,
+            format: {
+              comments: "all",
+              beautify: true,
+              ascii_only: true,
+              indent_level: 2,
+            },
           }),
         ],
       },
@@ -34,6 +35,7 @@ export default [
         ],
       },
     ],
+    external: ["entities"], // External dependencies
     plugins: [
       typescript({
         // cacheDir: ".cache",

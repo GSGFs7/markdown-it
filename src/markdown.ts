@@ -1,13 +1,14 @@
 import Block from "./parser/block";
 import Core from "./parser/core";
 import Inline from "./parser/inline";
+import Renderer from "./renderer";
 
 export default class Markdown {
   core: Core;
   block: Block;
   inline: Inline;
 
-  renderer;
+  renderer: Renderer;
   linkify;
   options;
 
@@ -16,16 +17,15 @@ export default class Markdown {
     this.block = new Block();
     this.inline = new Inline();
 
+    this.renderer = new Renderer();
+
     this.options = {
       maxNesting: 10,
+      langPrefix: "language-",
     };
   }
 
   parse(src: string, env) {
-    if (typeof src !== "string") {
-      throw new Error("Input data should be a string");
-    }
-
     const state = new this.core.State(src, this, env);
 
     this.core.process(state);

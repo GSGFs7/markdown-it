@@ -1,5 +1,6 @@
 import { TagType } from "./renderer";
 
+// Two-dimensional array
 interface TokenAttr {
   0: string;
   1: string;
