@@ -16,7 +16,7 @@ import { BlockRuleFN } from "@/src/ruler";
  * @returns `true` if a code block was successfully parsed, otherwise `false`.
  */
 const code: BlockRuleFN = (state, startLine, endLine): boolean => {
-  if (state.sCount[startLine] - state.blkIndex < 4) {
+  if (state.sCount[startLine] - state.blkIndent < 4) {
     return false;
   }
 
@@ -30,7 +30,7 @@ const code: BlockRuleFN = (state, startLine, endLine): boolean => {
       continue;
     }
 
-    if (state.sCount[nextLine] - state.blkIndex >= 4) {
+    if (state.sCount[nextLine] - state.blkIndent >= 4) {
       nextLine++;
       last = nextLine;
       continue;
@@ -44,7 +44,7 @@ const code: BlockRuleFN = (state, startLine, endLine): boolean => {
   // add the token
   const token = state.push("code_block", "code", 0);
   token.content =
-    state.getLines(startLine, last, 4 + state.blkIndex, false) + "\n";
+    state.getLines(startLine, last, 4 + state.blkIndent, false) + "\n";
   token.map = [startLine, state.line];
 
   return true;

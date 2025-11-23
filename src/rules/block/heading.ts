@@ -3,7 +3,7 @@ import { isSpace } from "@/src/utils";
 
 type headingLevels = "h1" | "h2" | "h3" | "h4" | "h5" | "h6";
 
-const headingLevel = (level: number): headingLevels => {
+export const headingLevel = (level: number): headingLevels => {
   switch (level) {
     case 1:
       return "h1";
@@ -25,7 +25,7 @@ const headingLevel = (level: number): headingLevels => {
 const heading: BlockRuleFN = (state, startLine, _endLine, silent): boolean => {
   let pos = state.bMarks[startLine] + state.tShift[startLine];
   let max = state.eMarks[startLine];
-  if (state.sCount[startLine] - state.blkIndex >= 4) {
+  if (state.sCount[startLine] - state.blkIndent >= 4) {
     return false;
   }
 

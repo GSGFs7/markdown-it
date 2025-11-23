@@ -3,11 +3,17 @@ import { BlockRuleFN, BlockRuler, Ruler } from "../ruler";
 import Token from "../token";
 import StateBlock from "./block_state";
 
+import r_blockquote from "../rules/block/blockquote";
 import r_code from "../rules/block/code";
 import r_fence from "../rules/block/fence";
 import r_heading from "../rules/block/heading";
+import r_hr from "../rules/block/hr";
+import r_html_block from "../rules/block/html_block";
+import r_list from "../rules/block/list";
 import r_paragraph from "../rules/block/paragraph";
+import r_reference from "../rules/block/reference";
 import r_table from "../rules/block/table";
+import r_lheading from "../rules/block/lheading";
 
 type StateBlockConstructor = new (
   src: string,
@@ -32,11 +38,18 @@ type StateBlockConstructor = new (
  * In this case, the second line will terminate the paragraph rule from the first line.
  *
  */
-const _rules: [string, BlockRuleFN, string[]?][] = [
+const _rules: [string, BlockRuleFN, string[]?][] =
+  /* prettier-ignore */ [
   ["table", r_table, ["paragraph", "reference"]],
   ["code", r_code],
   ["fence", r_fence, ["paragraph", "reference", "blockquote", "list"]],
+  ["blockquote", r_blockquote, ["paragraph", "reference", "blockquote", "list"]],
+  ["hr", r_hr, ["paragraph", "reference", "blockquote", "list"]],
+  ["list", r_list, ["paragraph", "reference", "blockquote"]],
+  ["reference", r_reference],
+  ["html_block", r_html_block, ["paragraph", "reference", "blockquote"]],
   ["heading", r_heading, ["paragraph", "reference", "blockquote"]],
+  ["lheading", r_lheading],
   ["paragraph", r_paragraph],
 ];
 
@@ -88,7 +101,7 @@ export default class Block {
 
       // Termination condition for nested calls.
       // Nested calls currently used for blockQuotes & lines.
-      if (state.sCount[line] < state.blkIndex) {
+      if (state.sCount[line] < state.blkIndent) {
         break;
       }
 

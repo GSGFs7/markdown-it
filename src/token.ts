@@ -3,7 +3,7 @@ import { TagType } from "./renderer";
 // Two-dimensional array
 interface TokenAttr {
   0: string;
-  1: string;
+  1: string | number | null;
 }
 
 export type TokenType =
@@ -194,9 +194,9 @@ export default class Token {
     }
   }
 
-  attrGet(name: string): string | null {
+  attrGet(name: string): string | number | null {
     const index = this.attrIndex(name);
-    let value: string | null = null;
+    let value: string | number | null = null;
 
     if (index >= 0 && this.attrs) {
       value = this.attrs[index][1];

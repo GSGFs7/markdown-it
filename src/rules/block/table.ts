@@ -64,11 +64,11 @@ const table: BlockRuleFN = (state, startLine, endLine, silent) => {
   }
 
   const nextLine = startLine + 1;
-  if (state.sCount[nextLine] < state.blkIndex) {
+  if (state.sCount[nextLine] < state.blkIndent) {
     return false;
   }
   // If it's indented more than 3 space, it should be a code block.
-  if (state.sCount[nextLine] - state.blkIndex >= 4) {
+  if (state.sCount[nextLine] - state.blkIndent >= 4) {
     return false;
   }
 
@@ -155,7 +155,7 @@ const table: BlockRuleFN = (state, startLine, endLine, silent) => {
   if (lineText.indexOf("|") === -1) {
     return false;
   }
-  if (state.sCount[startLine] - state.blkIndex >= 4) {
+  if (state.sCount[startLine] - state.blkIndent >= 4) {
     return false;
   }
 

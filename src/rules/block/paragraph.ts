@@ -10,7 +10,7 @@ const paragraph: BlockRuleFN = (state, startLine, endLine): boolean => {
   // jump line-by-line until empty one or EOF
   for (; nextLine < endLine && !state.isEmpty(nextLine); nextLine++) {
     // this would be a code block
-    if (state.sCount[nextLine] - state.blkIndex > 3) {
+    if (state.sCount[nextLine] - state.blkIndent > 3) {
       continue;
     }
     // quirk for block quotes, this line should already be checked by that rule
@@ -32,7 +32,7 @@ const paragraph: BlockRuleFN = (state, startLine, endLine): boolean => {
   }
 
   const content = state
-    .getLines(startLine, nextLine, state.blkIndex, false)
+    .getLines(startLine, nextLine, state.blkIndent, false)
     .trim();
 
   state.line = nextLine;

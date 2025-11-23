@@ -14,7 +14,12 @@ export type TagType =
   | "h3"
   | "h4"
   | "h5"
-  | "h6";
+  | "h6"
+  | "blockquote"
+  | "hr"
+  | "ol"
+  | "ul"
+  | "li";
 
 export type RendererRule = (
   self: Renderer,
@@ -141,7 +146,10 @@ export default class Renderer {
     }
 
     for (const attr of token.attrs) {
-      result += " " + escapeHtml(attr[0]) + '="' + escapeHtml(attr[1]) + '"';
+      const name = attr[0];
+      const val = attr[1] ?? "";
+      result +=
+        " " + escapeHtml(String(name)) + '="' + escapeHtml(String(val)) + '"';
     }
 
     return result;

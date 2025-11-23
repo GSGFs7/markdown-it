@@ -7,7 +7,7 @@ const fence: BlockRuleFN = (state, startLine, endLine, silent): boolean => {
   let max = state.eMarks[startLine];
 
   // if it's indented more than 3 spaces, it should be a code block
-  if (state.sCount[startLine] - state.blkIndex >= 4) {
+  if (state.sCount[startLine] - state.blkIndent >= 4) {
     return false;
   }
 
@@ -58,7 +58,7 @@ const fence: BlockRuleFN = (state, startLine, endLine, silent): boolean => {
     pos = mem = state.bMarks[nextLine] + state.tShift[nextLine];
     max = state.eMarks[nextLine];
 
-    if (pos < max && state.sCount[nextLine] < state.blkIndex) {
+    if (pos < max && state.sCount[nextLine] < state.blkIndent) {
       break;
     }
 
@@ -67,7 +67,7 @@ const fence: BlockRuleFN = (state, startLine, endLine, silent): boolean => {
     }
 
     // closing fence should be indented less than 4 space
-    if (state.sCount[nextLine] - state.blkIndex >= 4) {
+    if (state.sCount[nextLine] - state.blkIndent >= 4) {
       continue;
     }
 

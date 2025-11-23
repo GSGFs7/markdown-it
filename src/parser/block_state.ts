@@ -40,7 +40,7 @@ export default class StateBlock {
   bsCount: number[];
 
   /** */
-  blkIndex: number;
+  blkIndent: number;
 
   /** */
   line: number;
@@ -55,7 +55,7 @@ export default class StateBlock {
   ddIndex: number;
 
   /** */
-  listIndex: number;
+  listIndent: number;
 
   /** */
   parentType: "root" | "list" | "blockquote" | "paragraph" | "reference";
@@ -75,12 +75,12 @@ export default class StateBlock {
     this.sCount = [];
     this.bsCount = [];
 
-    this.blkIndex = 0;
+    this.blkIndent = 0;
     this.line = 0;
     this.lineMax = 0;
     this.tight = false;
     this.ddIndex = -1;
-    this.listIndex = -1;
+    this.listIndent = -1;
 
     this.parentType = "root";
 
@@ -158,7 +158,7 @@ export default class StateBlock {
    * @param nesting - The nesting level change for the token. Positive values decrease the current level, negative values increase it.
    * @returns The newly created token.
    */
-  push(type: TokenType, tag: TagType, nesting: number) {
+  push(type: TokenType, tag: TagType, nesting: number): Token {
     const token = new Token(type, tag, nesting);
     token.block = true;
 

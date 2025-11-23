@@ -151,3 +151,11 @@ export const unescapeAll = (str: string): string => {
     return replaceEntityPattern(match, entity);
   });
 };
+
+export function normalizeReference(str: string) {
+  // Trim and collapse whitespace
+  str = str.trim().replace(/\s+/g, ' ');
+  
+  // Unicode case folding
+  return str.toLowerCase().toUpperCase();
+}
